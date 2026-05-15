@@ -35,7 +35,7 @@ Elementem utrudniającym jest *imit czasu — każda tura ma odliczanie, a niewy
 
 ---
 
-## Poziomy trudności
+# Poziomy trudności
 
 | Poziom 		| Czas bazowy 			| Opis |
 |--------		|------------			|------|
@@ -55,18 +55,15 @@ Projekt23/
 └── README
     └── Dokumentacja_Projekt23_Niemiec_Kamil_434510.pdf
 ```
-
-
-#
 #Autor
 
-| **Imię i nazwisko** 	| Kamil Niemiec 						|
-| **Nr albumu** 	| 434510 							|
+| **Imię i nazwisko** 	| Kamil Niemiec |
+| **Nr albumu** 	| 434510 |
 | **Uczelnia** 		| Akademia Górniczo-Hutnicza im. Stanisława Staszica w Krakowie |
-| **Kierunek** 		| Informatyka i Ekonometria 					|
-| **Rok / Semestr** 	| I rok, Semestr 2 						|
-| **Przedmiot** 	| Programowanie komputerów 					|
-| **Data** 		| 2026-03-15 							|
+| **Kierunek** 		| Informatyka i Ekonometria |
+| **Rok / Semestr** 	| I rok, Semestr 2 	|
+| **Przedmiot** 	| Programowanie komputerów |
+| **Data** 		| 2026-03-15 |
 
 ---
 
