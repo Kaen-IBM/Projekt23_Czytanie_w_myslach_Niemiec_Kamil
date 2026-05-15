@@ -24,27 +24,9 @@ Założenia projketowe:
 #include <string.h>// bibioteka do obsugłi funkcji string
 #include <time.h>
 
-
-
-void look_for_char_of_arrow() //Funkcja pomocnicza do wyświetlenia znaku strzałki w bok wpowadzonej z klawiatury
-{
-    while (1) // pętla nieskończona, zostanie przewana dopiero po naciśnięciu znaku nr 27 (ESC)
-    {
-        unsigned char ch = _getch(); // Wczytuje znak bez Entera 
-       if (ch == 27) break; // ESC kończy program - znalezione wcześniej za pomocą look_for_char()
-       if (ch == 224) {}
-       else printf("Znak nr [%d] to: %c\n", ch, ch);
-     
-/* ------------ Do użytku---------------
-        Znak nr[75] to: K  - strzałak w lewo z klawiatury
-        Znak nr[77] to : M - strzałak w lewo z klawiatury
-        Znak nr [97] to: a
-        Znak nr [100] to: d
-        Znak nr [65] to: A
-        Znak nr [68] to: D
---------------------------------*/
-    }
-}
+#include <stdlib.h>
+#include <math.h>
+#include <ctype.h>
 
 void look_for_char() //Funkcja pomocnicza do wyświetlania wszyskich znaków z tabliczy ASCI
 {
@@ -58,9 +40,16 @@ void look_for_char() //Funkcja pomocnicza do wyświetlania wszyskich znaków z t
         Znak nr [17] to: ◄
 
         Znak nr [26] to: →
-        Znak nr [27] to: //nie ma - po sprawdzeniu znak 27 został zmieniony w któru=ym stantadzei ASCI na znak sterujący ESC (Escape)
+        Znak nr [27] to: //nie ma - po sprawdzeniu znak 27 został zmieniony w którymś stantadzei ASCI na znak sterujący ESC (Escape)
 
-    -----------------------*/
+  
+        Znak nr[75] to: K  - strzałak w lewo z klawiatury
+        Znak nr[77] to : M - strzałak w lewo z klawiatury
+        Znak nr [97] to: a
+        Znak nr [100] to: d
+        Znak nr [65] to: A
+        Znak nr [68] to: D
+        --------------------------------*/
 
 }
 // Funkcja teraz przyjmuje wskaźnik do miejsca, gdzie ma zapisać imię
@@ -104,7 +93,7 @@ int get_choice_with_timer(float time_limit, float* time_left_out, char info[]) /
         float t_left= time_limit - t_licznik; // czas który pozostał
 
         // 2. Aktualizacja licznika w tej samej linii (\r) oraz przesuniecie kursora 
-        printf("\033[H\r %s %.1f s \n", info, t_left); // \033[H – przesuń kursor do lewgo górnego rogu; \033[1B przesunkurso o jedną linię w dół
+        printf("\033[H\033[K %s %.1f s \n", info, t_left); // \033[H – przesuń kursor do lewgo górnego rogu; \033[1B przesunkurso o jedną linię w dół
      
 
         // 3. Sprawdzenie czy naciśnięto klawisz (klucz do sukcesu!)
@@ -134,10 +123,10 @@ int comp_guess(int count) // funkcja która na podstawie licznikia count przewid
 {
     if (count <= 2 && count >= -2)
     {
-        count = rand()%2-1;
+        count = (rand()%2)*2-1;
     }
    
-        if (count >= 0) return 1;
+        if (count > 0) return 1;
         else return -1;
        // count >= 0 ? 1 : -1; // Funkcja z wykładu
 }
@@ -155,9 +144,9 @@ void game(char user_name[], int liczba_rund, int poziom)
     while (user_score < lr && comp_score < lr) //Pętla wykonywana dopóki użytkownik lub komputer nie uzyska 25 punktów
     {
         
-        snprintf(info, sizeof(info), "\rRunda: %d\t Punkty %s: %d\t Punkty Computer: %d\t Czas: ", runda, user_name, user_score, comp_score); //funkcja snprintf zapisuje Nagłowke do zmiennej in fo dzięki tyemu kmogę go przekazać do funkcji get_choice_with_timer i uzupełnić go o pozostały do czas 
+        snprintf(info, sizeof(info), "Runda: %d\t Punkty %s: %d\t Punkty Computer: %d\t Czas: ", runda, user_name, user_score, comp_score); //funkcja snprintf zapisuje Nagłowke do zmiennej in fo dzięki tyemu kmogę go przekazać do funkcji get_choice_with_timer i uzupełnić go o pozostały do czas 
         
-        printf("\033[H\033[B\rWybierz kierunek: lewo[A, <-] lub prawo [D,  ->]: \n"); // \033[H przesuwam się do prawwego górnego rogu a następnie przechodzę o 1 wiersz w dół, dzięki temu ten tekst zawsze pojawi się w linijce nr 2
+        printf("\033[H\033[3B\rWybierz kierunek: lewo[A, <-] lub prawo [D,  ->]: \n"); // \033[H przesuwam się do prawwego górnego rogu a następnie przechodzę o 1 wiersz w dół, dzięki temu ten tekst zawsze pojawi się w linijce nr 2
 
         if (count * choice < 0)//Jeżeli użytkownik zmieni kierunek licznik zostanmie zresetowanny
         {
@@ -167,6 +156,10 @@ void game(char user_name[], int liczba_rund, int poziom)
        count += choice;//naliczaneni licznia wyboru kireunku - im wyższa wartość (na moduł) tym częściej został wybrany dany kireunk pod rząd
        runda++;
         // Wywołujemy naszą nową funkcję
+
+       int comp_choice = comp_guess(count);
+       //printf("Wybor Comp: %d \n", comp_choice ); // Do sprawdzenia jak są generowane wybory
+
        choice = get_choice_with_timer(time_limit, &time_left, info);// Funkcja do oblicznia pozostago czasu w czasie rzeczywisym zanim użytkownik wybierze kierunek
 
         if (choice == 0) // brak wyboru z wyznaczonym czasie -> punkt dla komputera
@@ -178,7 +171,6 @@ void game(char user_name[], int liczba_rund, int poziom)
         else //sprawdzenie czy komputer prawidłowo przewidział ruch
             
         {
-            int comp_choice = comp_guess(count);
             if (choice == comp_choice) // koputer trafił, punkt dla niego
             {
                 printf("\n\033[KKomputer przewidzial Twoj ruch! Punkt dla niego.");
@@ -222,7 +214,7 @@ int start_game()
     while (1)
     {
         printf("\033[2J\033[H"); //Polecnie do wyczyszcenia ekranu
-        printf("Witaj w grze w: Czytanie w myslach!\n");
+        printf("Witaj w grze w: Czytanie w myslach!\n\n");
         printf("Wybierz jedna z ponizszych opcji:\n");
         printf("\t1. Rozpocznij gre\n");
         printf("\t2. Ustawienia\n");
@@ -303,14 +295,14 @@ return 0;
               ----------- Uwaga: -------------
 Nie jestem autroem poniższego kodu
 Jest on potrzebny tylko przy uruhamianiu programu z pliku .exe bez tego program nie działa prawidłowo
-- Fuknje które powinny naDpisywac generowany stale tekst rozlewją się po ekranie
+- Funkcje które powinny nadpisywac generowany stale tekst rozlewją się po ekranie
             ----------- Opis: -------------
 Kod który sprawia że znaki typu:
-    \033[2J czysci cały ekran
-    \033[K czyści całą linie
-    \033[H przesuwam się do prawego górnego rogu
-    \033[*A przesuwa się o * lini w górę
-    \033[*B przesuwa się o * lini w doł
+    \033[2J -  czysci cały ekran
+    \033[K - czyści całą linie
+    \033[H - przesuwam się do lewego górnego rogu
+    \033[*A - przesuwa się o * lini w górę
+    \033[*B - przesuwa się o * lini w doł
 iterpretretowane jako komendy sterujące 
 ==========================================================================*/
 void enable_ansi() 
